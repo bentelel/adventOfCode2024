@@ -79,9 +79,6 @@ func sortSliceAscending(s []string) ([]string, error) {
 		//}
 		if isSliceSortedAsc(s) {
 			fmt.Print("slice is sorted\n")
-
-			fmt.Printf("first element: %s\n", s[0])
-			fmt.Printf("last element: %s\n", s[len(s)-1])
 			return s, nil
 		}
 		// fmt.Print("\n")
@@ -128,7 +125,11 @@ func findDifferencesBetweenSlices(l []string, r []string) ([]int, error) {
 		if err != nil {
 			return []int{}, err
 		}
-		diff[i] = rInt - lInt
+		dist := lInt - rInt
+		if dist < 0 {
+			dist *= -1
+		}
+		diff[i] = dist
 	}
 	return diff, nil
 }
