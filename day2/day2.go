@@ -27,7 +27,7 @@ func A() {
 	// first check -- is a row all ascending or all descending? if yes, we press on. if no, we ignore it.
 	for _, l := range levelsAndRooms {
 		allAscOrDesc := utils.IsSliceAllAscendingOrDescending(l)
-		fmt.Printf("level: %v, is desc/asc: %t\n", l, allAscOrDesc)
+		// fmt.Printf("level: %v, is desc/asc: %t\n", l, allAscOrDesc)
 		if allAscOrDesc {
 			levelsAndRooms_temp = append(levelsAndRooms_temp, l)
 		}
@@ -40,13 +40,13 @@ func A() {
 		if err != nil {
 			panic(err)
 		}
-
-		fmt.Printf("level: %v, distance is ok: %t\n", l, distancesAreOk)
+		// fmt.Printf("level: %v, distance is ok: %t\n", l, distancesAreOk)
 		if distancesAreOk {
 			levelsAndRooms_temp = append(levelsAndRooms_temp, l)
 		}
 	}
 	levelsAndRooms = levelsAndRooms_temp
-	fmt.Printf("final levels: %v\n", levelsAndRooms)
-	fmt.Printf("The overall sum of differences is: %d\n", 0)
+	// fmt.Printf("final levels: %v\n", levelsAndRooms)
+	countOfSaveLevels := len(levelsAndRooms)
+	fmt.Printf("The count of save levels is: %d\n", countOfSaveLevels)
 }
