@@ -324,6 +324,12 @@ func AreDistancesOk(input []string, lowerBound int, upperBound int) (bool, error
 func AreDistancesOkWithDampening(input []string, lowerBound int, upperBound int) (bool, error) {
 	// returns true (and nil) if the distance between any 2 sequential elements of the input are within (including) the lower and upper bound
 	// tolerates 1 of these errors and only return false if the second error is found.
+	// we can not use the errorCounter approach here because:
+	// slice like 9 7 6 2 1 > we get the first error when looking at pairing 6 2.
+	// the dampening removes 1 level. that would be as if the slice is 9 7 2 1
+	// which still would be wrong because of the distnace between 7 2.
+	// our errorCounter approach would flag this as valid though!
+	errorCount := 0
 	for i := 0; i < len(input)-1; i++ {
 		left, err := strconv.Atoi(input[i])
 		if err != nil {
@@ -333,13 +339,31 @@ func AreDistancesOkWithDampening(input []string, lowerBound int, upperBound int)
 		if err != nil {
 			return false, err
 		}
+		var rightTwiceOver int
+		if i < len(input)-2 {
+			rightTwiceOver, err = strconv.Atoi(input[i+2])
+			if err != nil {
+				return false, err
+			}
+		}
 		distance := left - right
 		if distance < 0 {
 			distance *= -1
 		}
+		distanceTwiceOver := left - rightTwiceOver
+		if distanceTwiceOver < 0 {
+			distanceTwiceOver *= -1
+		}
 		// fmt.Printf("left: %d, right: %d, distance: %d\n", left, right, distance)
 		if distance < lowerBound || distance > upperBound {
-			return false, nil
+			// to catch errors like 9 7 6 2 1, we check one index further to the right against the left side as well. if that also fails the distance check, then return false
+			if distanceTwiceOver < lowerBound || distanceTwiceOver > upperBound {
+				return false, nil
+			}
+			errorCount += 1
+			if errorCount > 1 {
+				return false, nil
+			}
 		}
 	}
 	return true, nil
