@@ -6,7 +6,11 @@ import (
 	"bentelel/adventOfCode2024/utils"
 )
 
-const inputDirectory string = "day2"
+const (
+	inputDirectory string = "day2"
+	lowerBound     int    = 1
+	upperBound     int    = 3
+)
 
 func A() {
 	fmt.Print("running day 2A.\n")
@@ -19,15 +23,30 @@ func A() {
 		fmt.Printf("level: %s\n", l)
 	}
 	levelsAndRooms := utils.GetRowsAndElements(levels)
-	for _, l := range levelsAndRooms {
-		fmt.Printf("level: %s\n", l)
-	}
-
+	levelsAndRooms_temp := [][]string{}
+	// first check -- is a row all ascending or all descending? if yes, we press on. if no, we ignore it.
 	for _, l := range levelsAndRooms {
 		allAscOrDesc := utils.IsSliceAllAscendingOrDescending(l)
 		fmt.Printf("level: %v, is desc/asc: %t\n", l, allAscOrDesc)
-
+		if allAscOrDesc {
+			levelsAndRooms_temp = append(levelsAndRooms_temp, l)
+		}
 	}
+	levelsAndRooms = levelsAndRooms_temp
+	levelsAndRooms_temp = [][]string{}
+	// second check -- is the distance between all elements in each room ok?
+	for _, l := range levelsAndRooms {
+		distancesAreOk, err := utils.AreDistancesOk(l, lowerBound, upperBound)
+		if err != nil {
+			panic(err)
+		}
 
+		fmt.Printf("level: %v, distance is ok: %t\n", l, distancesAreOk)
+		if distancesAreOk {
+			levelsAndRooms_temp = append(levelsAndRooms_temp, l)
+		}
+	}
+	levelsAndRooms = levelsAndRooms_temp
+	fmt.Printf("final levels: %v\n", levelsAndRooms)
 	fmt.Printf("The overall sum of differences is: %d\n", 0)
 }
