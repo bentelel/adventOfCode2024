@@ -19,9 +19,9 @@ func A() {
 		panic(err)
 	}
 	levels := utils.GetRowsFromInput(puzzleInput)
-	for _, l := range levels {
-		fmt.Printf("level: %s\n", l)
-	}
+	//for _, l := range levels {
+	//	fmt.Printf("level: %s\n", l)
+	//}
 	levelsAndRooms := utils.GetRowsAndElements(levels)
 	levelsAndRooms_temp := [][]string{}
 	// first check -- is a row all ascending or all descending? if yes, we press on. if no, we ignore it.
@@ -33,10 +33,10 @@ func A() {
 		// fmt.Printf("level: %v, is desc/asc: %t\n", l, allAscOrDesc)
 		if allAscOrDesc {
 			levelsAndRooms_temp = append(levelsAndRooms_temp, l)
-		} else {
-			fmt.Printf("unsafe level (not asc/desc): %v\n", l)
-			// [9 11 13 14 17 24]
-		}
+		} // else {
+		//	fmt.Printf("unsafe level (not asc/desc): %v\n", l)
+		// [9 11 13 14 17 24]
+		//}
 	}
 	levelsAndRooms = levelsAndRooms_temp
 	levelsAndRooms_temp = [][]string{}

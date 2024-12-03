@@ -204,25 +204,37 @@ func Map(vs []string, f func(string) string) []string {
 	return vsm
 }
 
-func sliceStartsAscending(s []string) bool {
+func sliceStartsAscending(s []string) (bool, error) {
 	/// returns true if the supplied slice starts out ascending
 	/// if multiple entries of the same numbers follow at the start, the func keeps checking until it hits the first non-same number.
 	/// a slice of all the same numbers is considered ascending.
 	for i := 0; i < len(s)-1; i++ {
-		if s[i] == s[i+1] {
+		left, err := strconv.Atoi(s[i])
+		if err != nil {
+			return false, err
+		}
+		right, err := strconv.Atoi(s[i+1])
+		if err != nil {
+			return false, err
+		}
+
+		if left == right {
 			continue
-		} else if s[i] < s[i+1] {
-			return true
+		} else if left < right {
+			return true, nil
 		} else {
-			return false
+			return false, nil
 		}
 	}
-	return true
+	return true, nil
 }
 
 func IsSliceAllAscendingOrDescending(s []string) (bool, error) {
-	startsAscending := sliceStartsAscending(s)
-
+	startsAscending, err := sliceStartsAscending(s)
+	if err != nil {
+		return false, nil
+	}
+	fmt.Printf("slice starts ascending: %v, %t\n", s, startsAscending)
 	for i := 0; i < len(s)-1; i++ {
 		left, err := strconv.Atoi(s[i])
 		if err != nil {
