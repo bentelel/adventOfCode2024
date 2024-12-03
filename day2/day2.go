@@ -49,9 +49,9 @@ func A() {
 		// fmt.Printf("level: %v, distance is ok: %t\n", l, distancesAreOk)
 		if distancesAreOk {
 			levelsAndRooms_temp = append(levelsAndRooms_temp, l)
-		} else {
-			fmt.Printf("unsafe level (bounds): %v\n", l)
-		}
+		} // else {
+		//fmt.Printf("unsafe level (bounds): %v\n", l)
+		//}
 	}
 	levelsAndRooms = levelsAndRooms_temp
 	// fmt.Printf("final levels: %v\n", levelsAndRooms)
