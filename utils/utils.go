@@ -160,18 +160,6 @@ func GetCountOfNumbers(s []string) (map[string]int, error) {
 	return result, nil
 }
 
-func GetSimilarityScore(str string, counts map[string]int) (int, error) {
-	count, ok := counts[str]
-	if !ok {
-		return 0, nil
-	}
-	value, err := strconv.Atoi(str)
-	if err != nil {
-		return 0, err
-	}
-	return count * value, nil
-}
-
 func GetRowsFromInput(input string) []string {
 	rows := strings.Split(input, "\n")
 	// pop off last row if nil
