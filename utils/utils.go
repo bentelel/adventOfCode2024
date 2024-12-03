@@ -33,10 +33,19 @@ func ReadFileToString(filename string, inputDirectory string) (string, error) {
 }
 
 func PopFromSlice(s []string) []string {
+	// ideally this should take in pointers and not the slice itself and then change the underlying slice and return the popped element.
 	if len(s) == 0 {
 		return s
 	}
 	return s[:len(s)-1]
+}
+
+func PopFromSliceOfSlices(s [][]string) [][]string {
+	// ideally this should take in pointers and not the slice itself and then change the underlying slice and return the popped element.
+	if len(s) == 0 {
+		return s
+	}
+	return s[:len(s)-1][:]
 }
 
 func GetListsFromInput(input string) ([]string, []string) {
@@ -86,11 +95,11 @@ func SortSliceAscending(s []string) ([]string, error) {
 
 func IsSliceSortedAsc(s []string) bool {
 	for i := 0; i < len(s)-1; i++ {
-		first, err := strconv.Atoi(stripTrailingNewlines(s[i]))
+		first, err := strconv.Atoi(StripTrailingNewlines(s[i]))
 		if err != nil {
 			panic(err)
 		}
-		second, err := strconv.Atoi(stripTrailingNewlines(s[i+1]))
+		second, err := strconv.Atoi(StripTrailingNewlines(s[i+1]))
 		if err != nil {
 			panic(err)
 		}
@@ -161,4 +170,73 @@ func GetSimilarityScore(str string, counts map[string]int) (int, error) {
 		return 0, err
 	}
 	return count * value, nil
+}
+
+func GetRowsFromInput(input string) []string {
+	rows := strings.Split(input, "\n")
+	// pop off last row if nil
+	if rows[len(rows)-1] == "" {
+		rows = PopFromSlice(rows)
+	}
+	return rows
+}
+
+func GetRowsAndElements(input []string) [][]string {
+	var result [][]string = make([][]string, len(input))
+	for i := 0; i < len(input)-1; i++ {
+		elems := strings.Split(input[i], " ")
+		elems = Map(elems, StripTrailingNewlines)
+		result[i] = elems
+
+	}
+	// pop last row if nil
+	if len(result[len(result)-1]) == 0 {
+		result = PopFromSliceOfSlices(result)
+	}
+	return result
+}
+
+func Map(vs []string, f func(string) string) []string {
+	vsm := make([]string, len(vs))
+	for i, v := range vs {
+		vsm[i] = f(v)
+	}
+	return vsm
+}
+
+func sliceStartsAscending(s []string) bool {
+	/// returns true if the supplied slice starts out ascending
+	/// if multiple entries of the same numbers follow at the start, the func keeps checking until it hits the first non-same number.
+	/// a slice of all the same numbers is considered ascending.
+	for i := 0; i < len(s)-1; i++ {
+		if s[i] == s[i+1] {
+			continue
+		} else if s[i] < s[i+1] {
+			return true
+		} else {
+			return false
+		}
+	}
+	return true
+}
+
+func IsSliceAllAscendingOrDescending(s []string) bool {
+	startsAscending := sliceStartsAscending(s)
+
+	for i := 0; i < len(s)-1; i++ {
+		if startsAscending {
+			if s[i] <= s[i+1] {
+				continue
+			} else {
+				return false
+			}
+		} else {
+			if s[i] >= s[i+1] {
+				continue
+			} else {
+				return false
+			}
+		}
+	}
+	return true
 }
