@@ -26,10 +26,16 @@ func A() {
 	levelsAndRooms_temp := [][]string{}
 	// first check -- is a row all ascending or all descending? if yes, we press on. if no, we ignore it.
 	for _, l := range levelsAndRooms {
-		allAscOrDesc := utils.IsSliceAllAscendingOrDescending(l)
+		allAscOrDesc, err := utils.IsSliceAllAscendingOrDescending(l)
+		if err != nil {
+			panic(err)
+		}
 		// fmt.Printf("level: %v, is desc/asc: %t\n", l, allAscOrDesc)
 		if allAscOrDesc {
 			levelsAndRooms_temp = append(levelsAndRooms_temp, l)
+		} else {
+			fmt.Printf("unsafe level (not asc/desc): %v\n", l)
+			// [9 11 13 14 17 24]
 		}
 	}
 	levelsAndRooms = levelsAndRooms_temp
@@ -43,6 +49,8 @@ func A() {
 		// fmt.Printf("level: %v, distance is ok: %t\n", l, distancesAreOk)
 		if distancesAreOk {
 			levelsAndRooms_temp = append(levelsAndRooms_temp, l)
+		} else {
+			fmt.Printf("unsafe level (bounds): %v\n", l)
 		}
 	}
 	levelsAndRooms = levelsAndRooms_temp

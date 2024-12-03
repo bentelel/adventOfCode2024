@@ -220,25 +220,33 @@ func sliceStartsAscending(s []string) bool {
 	return true
 }
 
-func IsSliceAllAscendingOrDescending(s []string) bool {
+func IsSliceAllAscendingOrDescending(s []string) (bool, error) {
 	startsAscending := sliceStartsAscending(s)
 
 	for i := 0; i < len(s)-1; i++ {
+		left, err := strconv.Atoi(s[i])
+		if err != nil {
+			return false, err
+		}
+		right, err := strconv.Atoi(s[i+1])
+		if err != nil {
+			return false, err
+		}
 		if startsAscending {
-			if s[i] <= s[i+1] {
+			if left <= right {
 				continue
 			} else {
-				return false
+				return false, nil
 			}
 		} else {
-			if s[i] >= s[i+1] {
+			if left >= right {
 				continue
 			} else {
-				return false
+				return false, nil
 			}
 		}
 	}
-	return true
+	return true, nil
 }
 
 func AreDistancesOk(input []string, lowerBound int, upperBound int) (bool, error) {
@@ -256,7 +264,7 @@ func AreDistancesOk(input []string, lowerBound int, upperBound int) (bool, error
 		if distance < 0 {
 			distance *= -1
 		}
-		fmt.Printf("left: %d, right: %d, distance: %d\n", left, right, distance)
+		// fmt.Printf("left: %d, right: %d, distance: %d\n", left, right, distance)
 		if distance < lowerBound || distance > upperBound {
 			return false, nil
 		}
