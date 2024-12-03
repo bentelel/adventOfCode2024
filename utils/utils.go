@@ -234,7 +234,6 @@ func IsSliceAllAscendingOrDescending(s []string) (bool, error) {
 	if err != nil {
 		return false, nil
 	}
-	fmt.Printf("slice starts ascending: %v, %t\n", s, startsAscending)
 	for i := 0; i < len(s)-1; i++ {
 		left, err := strconv.Atoi(s[i])
 		if err != nil {
