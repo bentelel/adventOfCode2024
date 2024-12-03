@@ -183,7 +183,7 @@ func GetRowsFromInput(input string) []string {
 
 func GetRowsAndElements(input []string) [][]string {
 	var result [][]string = make([][]string, len(input))
-	for i := 0; i < len(input)-1; i++ {
+	for i := 0; i < len(input); i++ {
 		elems := strings.Split(input[i], " ")
 		elems = Map(elems, StripTrailingNewlines)
 		result[i] = elems
@@ -239,4 +239,27 @@ func IsSliceAllAscendingOrDescending(s []string) bool {
 		}
 	}
 	return true
+}
+
+func AreDistancesOk(input []string, lowerBound int, upperBound int) (bool, error) {
+	// returns true (and nil) if the distance between any 2 sequential elements of the input are within (including) the lower and upper bound
+	for i := 0; i < len(input)-1; i++ {
+		left, err := strconv.Atoi(input[i])
+		if err != nil {
+			return false, err
+		}
+		right, err := strconv.Atoi(input[i+1])
+		if err != nil {
+			return false, err
+		}
+		distance := left - right
+		if distance < 0 {
+			distance *= -1
+		}
+		fmt.Printf("left: %d, right: %d, distance: %d\n", left, right, distance)
+		if distance < lowerBound || distance > upperBound {
+			return false, nil
+		}
+	}
+	return true, nil
 }
