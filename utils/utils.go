@@ -208,6 +208,8 @@ func sliceStartsAscending(s []string) (bool, error) {
 	/// returns true if the supplied slice starts out ascending
 	/// if multiple entries of the same numbers follow at the start, the func keeps checking until it hits the first non-same number.
 	/// a slice of all the same numbers is considered ascending.
+	/// this might not be sufficient for day2B because day2B allows for a single error in the ordering
+	/// so if we have a slice like [2 1 3 4 5], this func would return that it is ordered descending, while it actually is ordered ascending, but with 1 error.
 	for i := 0; i < len(s)-1; i++ {
 		left, err := strconv.Atoi(s[i])
 		if err != nil {
@@ -244,17 +246,47 @@ func IsSliceAllAscendingOrDescending(s []string) (bool, error) {
 			return false, err
 		}
 		if startsAscending {
-			if left <= right {
+			if left < right {
 				continue
 			} else {
 				return false, nil
 			}
 		} else {
-			if left >= right {
+			if left > right {
 				continue
 			} else {
 				return false, nil
 			}
+		}
+	}
+	return true, nil
+}
+
+func IsSliceAllAscendingOrDescendingWithDampening(s []string) (bool, error) {
+	// does the same as the version without "WithDampening", but only returns false if our check condition is not met twice. This should be the same as if we ignore 1 wrong element.
+	// the way in which we test the slice needs to be different, because we can not rely on sliceStartsAscending to get the slices ordering.
+	// we check the slice for both ascending and descending order at the same time and keep track of how many elements are not in correct ordering for both orderings. if any more than 1 are wrong for each ordering kind, we return false.
+	// iterate over the slice from the frint
+	orderErrorCounterAscending := 0
+	orderErrorCounterDescending := 0
+	for i := 0; i < len(s)-1; i++ {
+		left, err := strconv.Atoi(s[i])
+		if err != nil {
+			return false, err
+		}
+		right, err := strconv.Atoi(s[i+1])
+		if err != nil {
+			return false, err
+		}
+		// if left < right, then we have at least 1 pair of elements which are not ordered descending.
+		if left < right {
+			orderErrorCounterDescending += 1
+		} else if right > left {
+			// if left > right, then we have at least 1 pair of elements which are not ordered ascending.
+			orderErrorCounterAscending += 1
+		}
+		if orderErrorCounterAscending > 2 && orderErrorCounterDescending > 2 {
+			return false, nil
 		}
 	}
 	return true, nil
