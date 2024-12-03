@@ -53,7 +53,7 @@ func B() {
 	}
 	var totalScore int = 0
 	for _, l := range leftInput {
-		score, err := utils.GetSimilarityScore(utils.StripTrailingNewlines(l), countsOfNumsInRight)
+		score, err := getSimilarityScore(utils.StripTrailingNewlines(l), countsOfNumsInRight)
 		if err != nil {
 			panic(err)
 		}
@@ -61,4 +61,16 @@ func B() {
 	}
 	totalScoreString := strconv.Itoa(totalScore)
 	fmt.Printf("The overall sum of similarity scores is: %s\n", totalScoreString)
+}
+
+func getSimilarityScore(str string, counts map[string]int) (int, error) {
+	count, ok := counts[str]
+	if !ok {
+		return 0, nil
+	}
+	value, err := strconv.Atoi(str)
+	if err != nil {
+		return 0, err
+	}
+	return count * value, nil
 }
