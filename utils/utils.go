@@ -265,39 +265,6 @@ func IsSliceAllAscendingOrDescending(s []string) (bool, error) {
 	return true, nil
 }
 
-func IsSliceAllAscendingOrDescendingWithDampening(s []string) (bool, error) {
-	// does the same as the version without "WithDampening", but only returns false if our check condition is not met twice. This should be the same as if we ignore 1 wrong element.
-	// the way in which we test the slice needs to be different, because we can not rely on sliceStartsAscending to get the slices ordering.
-	// we check the slice for both ascending and descending order at the same time and keep track of how many elements are not in correct ordering for both orderings. if any more than 1 are wrong for each ordering kind, we return false.
-	// iterate over the slice from the frint
-	orderErrorCounterAscending := 0
-	orderErrorCounterDescending := 0
-	for i := 0; i < len(s)-1; i++ {
-		left, err := strconv.Atoi(s[i])
-		if err != nil {
-			return false, err
-		}
-		right, err := strconv.Atoi(s[i+1])
-		if err != nil {
-			return false, err
-		}
-		// if left < right, then we have at least 1 pair of elements which are not ordered descending.
-		if left == right {
-			orderErrorCounterAscending += 1
-			orderErrorCounterDescending += 1
-		} else if left < right {
-			orderErrorCounterDescending += 1
-		} else if right > left {
-			// if left > right, then we have at least 1 pair of elements which are not ordered ascending.
-			orderErrorCounterAscending += 1
-		}
-		if orderErrorCounterAscending > 2 && orderErrorCounterDescending > 2 {
-			return false, nil
-		}
-	}
-	return true, nil
-}
-
 func AreDistancesOk(input []string, lowerBound int, upperBound int) (bool, error) {
 	// returns true (and nil) if the distance between any 2 sequential elements of the input are within (including) the lower and upper bound
 	for i := 0; i < len(input)-1; i++ {
@@ -321,50 +288,6 @@ func AreDistancesOk(input []string, lowerBound int, upperBound int) (bool, error
 	return true, nil
 }
 
-func AreDistancesOkWithDampening(input []string, lowerBound int, upperBound int) (bool, error) {
-	// returns true (and nil) if the distance between any 2 sequential elements of the input are within (including) the lower and upper bound
-	// tolerates 1 of these errors and only return false if the second error is found.
-	// we can not use the errorCounter approach here because:
-	// slice like 9 7 6 2 1 > we get the first error when looking at pairing 6 2.
-	// the dampening removes 1 level. that would be as if the slice is 9 7 2 1
-	// which still would be wrong because of the distnace between 7 2.
-	// our errorCounter approach would flag this as valid though!
-	// hang on!
-	errorCounter := 0
-	for i := 0; i < len(input)-1; i++ {
-		left, err := strconv.Atoi(input[i])
-		if err != nil {
-			return false, err
-		}
-		right, err := strconv.Atoi(input[i+1])
-		if err != nil {
-			return false, err
-		}
-		distance := left - right
-		if distance < 0 {
-			distance *= -1
-		}
-		// fmt.Printf("left: %d, right: %d, distance: %d\n", left, right, distance)
-		if distance < lowerBound || distance > upperBound {
-			// to catch errors like 9 7 6 2 1, we check one index further to the right against the left side as well. if that also fails the distance check, then return false
-			sliceDropLeft := input[i+1:]
-			sliceDropRight := append(input[:i+1], input[i+2:]...)
-			leftOk, err := AreDistancesOk(sliceDropLeft, lowerBound, upperBound)
-			if err != nil {
-				return false, err
-			}
-			rightOk, err := AreDistancesOk(sliceDropRight, lowerBound, upperBound)
-			if err != nil {
-				return false, err
-			}
-			if !leftOk && !rightOk {
-				return false, nil
-			}
-			errorCounter += 1
-			if errorCounter > 1 {
-				return false, nil
-			}
-		}
-	}
-	return true, nil
+func DropElementAtIndex(s []string, index int) []string {
+	return append(s[:index], s[index+1:]...)
 }
