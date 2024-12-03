@@ -245,6 +245,9 @@ func IsSliceAllAscendingOrDescending(s []string) (bool, error) {
 		if err != nil {
 			return false, err
 		}
+		if left == right {
+			return false, nil
+		}
 		if startsAscending {
 			if left < right {
 				continue
@@ -279,7 +282,10 @@ func IsSliceAllAscendingOrDescendingWithDampening(s []string) (bool, error) {
 			return false, err
 		}
 		// if left < right, then we have at least 1 pair of elements which are not ordered descending.
-		if left < right {
+		if left == right {
+			orderErrorCounterAscending += 1
+			orderErrorCounterDescending += 1
+		} else if left < right {
 			orderErrorCounterDescending += 1
 		} else if right > left {
 			// if left > right, then we have at least 1 pair of elements which are not ordered ascending.
@@ -294,6 +300,30 @@ func IsSliceAllAscendingOrDescendingWithDampening(s []string) (bool, error) {
 
 func AreDistancesOk(input []string, lowerBound int, upperBound int) (bool, error) {
 	// returns true (and nil) if the distance between any 2 sequential elements of the input are within (including) the lower and upper bound
+	for i := 0; i < len(input)-1; i++ {
+		left, err := strconv.Atoi(input[i])
+		if err != nil {
+			return false, err
+		}
+		right, err := strconv.Atoi(input[i+1])
+		if err != nil {
+			return false, err
+		}
+		distance := left - right
+		if distance < 0 {
+			distance *= -1
+		}
+		// fmt.Printf("left: %d, right: %d, distance: %d\n", left, right, distance)
+		if distance < lowerBound || distance > upperBound {
+			return false, nil
+		}
+	}
+	return true, nil
+}
+
+func AreDistancesOkWithDampening(input []string, lowerBound int, upperBound int) (bool, error) {
+	// returns true (and nil) if the distance between any 2 sequential elements of the input are within (including) the lower and upper bound
+	// tolerates 1 of these errors and only return false if the second error is found.
 	for i := 0; i < len(input)-1; i++ {
 		left, err := strconv.Atoi(input[i])
 		if err != nil {
