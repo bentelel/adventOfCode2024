@@ -7,7 +7,6 @@ import (
 	"path/filepath"
 	"strconv"
 	"strings"
-	"sync"
 )
 
 func buildPathToFile(filename string, inputDirectory string) (string, error) {
