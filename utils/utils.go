@@ -7,6 +7,7 @@ import (
 	"path/filepath"
 	"strconv"
 	"strings"
+	"sync"
 )
 
 func buildPathToFile(filename string, inputDirectory string) (string, error) {
@@ -299,12 +300,6 @@ func RemoveElementFromSlice(s []string, index int) ([]string, error) {
 		return []string{}, errors.New("Index error. Index out of bounds for slice.")
 	}
 	return append(s[0:index], s[index+1:len(s)-1]...), nil
-}
-
-func WrapChecksForGoroutines(input []string, lowerBound int, upperbound int, results chan bool, errors chan error) {
-	r, e := OrderAndDistanceCheck(input, lowerBound, upperbound)
-	results <- r
-	errors <- e
 }
 
 func DropElementAtIndex(s []string, index int) []string {
