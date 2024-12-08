@@ -40,6 +40,34 @@ func A() {
 	if err != nil {
 		panic(err)
 	}
+	overallResult, err := getSumOfMuls(input, lowerBound, upperBound)
+	if err != nil {
+		panic(err)
+	}
+	fmt.Printf("The overall result is: %d\n", overallResult)
+}
+
+func B() {
+	// new: there are do() and don't() occurances within the input.
+	// do() enables mul() while don't() diables them
+	// all mul() after a don't() are not counted until the next do() happens
+	// muls are enabled at the start
+	// plan:
+	//  keep the logic from a, but split the input by do() and don't() before doing As logic.
+	//  first split by don't()
+	//    input: mul(1,2)__mul(2,3)__don't()mul(5,6)__mul(2,4)_do()_mul(1,2)
+	//    output [mul(1,2)__mul(2,3)__ mul(5,6)__mul(2,4)_do()_mul(1,2)]
+	//    get out the 0th element > those are enabled by default!
+	//    rest: split by do()
+	//    keep right side, discard left side
+	//    assumption: do() and don't() always alternate!
+	//    input [mul(1,2)__mul(2,3)__ mul(5,6)__mul(2,4)_do()_mul(1,2)]
+	//    output 1: mul(1,2)__mul(2,3)__
+	//    output 2: [mul(5,6)__mul(2,4)_ _mul(1,2)] > discard left > _mul(1,2)
+	//  then run logic from A for all remaining input parts
+}
+
+func getSumOfMuls(input string, lowerBound int, upperBound int) (int, error) {
 	var muls []string = strings.Split(input, "mul(")
 	muls_temp := []string{}
 	for _, m := range muls {
@@ -55,7 +83,7 @@ func A() {
 			factors = append(factors, f)
 		}
 	}
-	fmt.Printf("%v\n", factors)
+	// fmt.Printf("%v\n", factors)
 	var overallResult int = 0
 	for _, fs := range factors {
 		if len(fs) > 2 {
@@ -66,17 +94,17 @@ func A() {
 			continue
 		}
 		if err != nil {
-			panic(err)
+			return 0, err
 		}
 		ok, right, err := utils.RepresentsIntegerWithinBounds(fs[1], lowerBound, upperBound)
 		if !ok {
 			continue
 		}
 		if err != nil {
-			panic(err)
+			return 0, err
 		}
 		result := left * right
 		overallResult += result
 	}
-	fmt.Printf("The overall result is: %d\n", overallResult)
+	return overallResult, nil
 }
