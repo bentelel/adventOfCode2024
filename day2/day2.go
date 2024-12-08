@@ -2,7 +2,6 @@ package day2
 
 import (
 	"fmt"
-	"strconv"
 
 	"bentelel/adventOfCode2024/utils"
 )
@@ -19,11 +18,11 @@ func A() {
 	if err != nil {
 		panic(err)
 	}
-	levels := utils.GetRowsFromInput(puzzleInput)
+	levels := utils.GetRowsFromInput(puzzleInput, "\n")
 	//for _, l := range levels {
 	//	fmt.Printf("level: %s\n", l)
 	//}
-	levelsAndRooms := utils.GetRowsAndElements(levels)
+	levelsAndRooms := utils.GetRowsAndElements(levels, "\n")
 	levelsAndRooms_temp := [][]string{}
 	// first check -- is a row all ascending or all descending? if yes, we press on. if no, we ignore it.
 	for _, l := range levelsAndRooms {
