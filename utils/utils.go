@@ -220,6 +220,7 @@ func sliceStartsAscending(s []string) (bool, error) {
 }
 
 func IsSliceAllAscendingOrDescending(s []string) (bool, error) {
+	fmt.Printf("order test slice: %v\n", s)
 	startsAscending, err := sliceStartsAscending(s)
 	if err != nil {
 		return false, nil
@@ -250,6 +251,7 @@ func IsSliceAllAscendingOrDescending(s []string) (bool, error) {
 			}
 		}
 	}
+	fmt.Printf("slice %v passed ordering check", s)
 	return true, nil
 }
 
@@ -302,5 +304,9 @@ func RemoveElementFromSlice(s []string, index int) ([]string, error) {
 }
 
 func DropElementAtIndex(s []string, index int) []string {
-	return append(s[:index], s[index+1:]...)
+	// do this in multiple steps to ensure we get a new copy of the slice and not only a reference
+	result := []string{}
+	result = append(result, s[:index]...)
+	result = append(result, s[index+1:]...)
+	return result
 }
