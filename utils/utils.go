@@ -310,3 +310,18 @@ func DropElementAtIndex(s []string, index int) []string {
 	result = append(result, s[index+1:]...)
 	return result
 }
+
+func RepresentsIntegerWithinBounds(input string, lowerBound int, upperBound int) (bool, int, error) {
+	if input == "" {
+		return false, 0, nil
+	}
+	i, err := strconv.Atoi(input)
+	if err != nil {
+		return false, 0, err
+	}
+	if i < lowerBound || i > upperBound {
+		return false, i, nil
+	}
+
+	return true, i, nil
+}
