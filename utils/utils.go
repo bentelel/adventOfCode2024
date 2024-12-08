@@ -220,7 +220,7 @@ func sliceStartsAscending(s []string) (bool, error) {
 }
 
 func IsSliceAllAscendingOrDescending(s []string) (bool, error) {
-	fmt.Printf("order test slice: %v\n", s)
+	// fmt.Printf("order test slice: %v\n", s)
 	startsAscending, err := sliceStartsAscending(s)
 	if err != nil {
 		return false, nil
@@ -251,7 +251,7 @@ func IsSliceAllAscendingOrDescending(s []string) (bool, error) {
 			}
 		}
 	}
-	fmt.Printf("slice %v passed ordering check", s)
+	// fmt.Printf("slice %v passed ordering check", s)
 	return true, nil
 }
 
