@@ -16,7 +16,7 @@ func A() {
 		panic(err)
 	}
 	// fmt.Printf("puzzle input:\n%s", puzzleInput)
-	leftInput, rightInput := utils.GetListsFromInput(puzzleInput)
+	leftInput, rightInput := utils.GetListsFromInput(puzzleInput, "\n")
 	//for _, v := range leftInput {
 	//	fmt.Printf("left input: %s\n", v)
 	//}
@@ -45,7 +45,7 @@ func B() {
 	if err != nil {
 		panic(err)
 	}
-	leftInput, rightInput := utils.GetListsFromInput(puzzleInput)
+	leftInput, rightInput := utils.GetListsFromInput(puzzleInput, "\n")
 
 	countsOfNumsInRight, err := utils.GetCountOfNumbers(rightInput)
 	if err != nil {

@@ -48,7 +48,7 @@ func PopFromSliceOfSlices(s [][]string) [][]string {
 	return s[:len(s)-1][:]
 }
 
-func GetListsFromInput(input string) ([]string, []string) {
+func GetListsFromInput(input string, separator string) ([]string, []string) {
 	rows := strings.Split(input, "\n")
 	// pop off last row if nil
 	if rows[len(rows)-1] == "" {
@@ -160,8 +160,8 @@ func GetCountOfNumbers(s []string) (map[string]int, error) {
 	return result, nil
 }
 
-func GetRowsFromInput(input string) []string {
-	rows := strings.Split(input, "\n")
+func GetRowsFromInput(input string, separator string) []string {
+	rows := strings.Split(input, separator)
 	// pop off last row if nil
 	if rows[len(rows)-1] == "" {
 		rows = PopFromSlice(rows)
@@ -169,10 +169,10 @@ func GetRowsFromInput(input string) []string {
 	return rows
 }
 
-func GetRowsAndElements(input []string) [][]string {
+func GetRowsAndElements(input []string, separator string) [][]string {
 	var result [][]string = make([][]string, len(input))
 	for i := 0; i < len(input); i++ {
-		elems := strings.Split(input[i], " ")
+		elems := strings.Split(input[i], separator)
 		elems = Map(elems, StripTrailingNewlines)
 		result[i] = elems
 

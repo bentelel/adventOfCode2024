@@ -2,6 +2,7 @@ package day2
 
 import (
 	"fmt"
+	"strconv"
 
 	"bentelel/adventOfCode2024/utils"
 )
@@ -65,32 +66,9 @@ func B() {
 	if err != nil {
 		panic(err)
 	}
-	levels := utils.GetRowsFromInput(puzzleInput)
-	levelsAndRooms := utils.GetRowsAndElements(levels)
+	levels := utils.GetRowsFromInput(puzzleInput, "\n")
+	levelsAndRooms := utils.GetRowsAndElements(levels, " ")
 	levelsAndRooms_temp := [][]string{}
 	// first check -- is a row all ascending or all descending? if yes, we press on. if no, we ignore it.
-	for _, l := range levelsAndRooms {
-		allAscOrDesc, err := utils.IsSliceAllAscendingOrDescendingWithDampening(l)
-		if err != nil {
-			panic(err)
-		}
-		if allAscOrDesc {
-			levelsAndRooms_temp = append(levelsAndRooms_temp, l)
-		}
-	}
-	levelsAndRooms = levelsAndRooms_temp
-	levelsAndRooms_temp = [][]string{}
-	// second check -- is the distance between all elements in each room ok?
-	for _, l := range levelsAndRooms {
-		distancesAreOk, err := utils.AreDistancesOkWithDampening(l, lowerBound, upperBound)
-		if err != nil {
-			panic(err)
-		}
-		if distancesAreOk {
-			levelsAndRooms_temp = append(levelsAndRooms_temp, l)
-		}
-	}
-	levelsAndRooms = levelsAndRooms_temp
-	countOfSaveLevels := len(levelsAndRooms)
-	fmt.Printf("The count of save levels is: %d\n", countOfSaveLevels)
+	fmt.Printf("The count of save levels is: %d\n", 0)
 }
