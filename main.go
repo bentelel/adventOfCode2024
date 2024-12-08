@@ -9,6 +9,7 @@ import (
 	"bentelel/adventOfCode2024/day1"
 	"bentelel/adventOfCode2024/day2"
 	"bentelel/adventOfCode2024/day3"
+	"bentelel/adventOfCode2024/day4"
 )
 
 var registry = map[string]func(){
@@ -18,6 +19,8 @@ var registry = map[string]func(){
 	"2B": day2.B,
 	"3A": day3.A,
 	"3B": day3.B,
+	"4A": day4.A,
+	"4B": day4.B,
 }
 
 func main() {
