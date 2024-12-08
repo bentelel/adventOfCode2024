@@ -301,6 +301,12 @@ func RemoveElementFromSlice(s []string, index int) ([]string, error) {
 	return append(s[0:index], s[index+1:len(s)-1]...), nil
 }
 
+func WrapChecksForGoroutines(input []string, lowerBound int, upperbound int, results chan bool, errors chan error) {
+	r, e := OrderAndDistanceCheck(input, lowerBound, upperbound)
+	results <- r
+	errors <- e
+}
+
 func DropElementAtIndex(s []string, index int) []string {
 	return append(s[:index], s[index+1:]...)
 }
