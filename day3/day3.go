@@ -69,6 +69,7 @@ func B() {
 	//    rest: split by do()
 	//    keep right side, discard left side
 	//    assumption: do() and don't() always alternate!
+	//    assumption doesnt seem to be true. no problem, just ignore inputs which do not have a "do()" at all
 	//    input [mul(1,2)__mul(2,3)__ mul(5,6)__mul(2,4)_do()_mul(1,2)]
 	//    output 1: mul(1,2)__mul(2,3)__
 	//    output 2: [mul(5,6)__mul(2,4)_ _mul(1,2)] > discard left > _mul(1,2)
@@ -85,12 +86,12 @@ func B() {
 	var input_only_dos []string
 	input_only_dos = append(input_only_dos, firstBlock)
 	for _, inp := range input_split_by_dont[1:] {
-		input_split_by_do := strings.Split(inp, DO)
-		if len(input_split_by_do) > 2 {
-			panic("assumption that do and dont alternate seems to be wrong")
+		if !strings.Contains(inp, DO) {
+			continue
 		}
-		// discard first part and only use second part
-		input_only_dos = append(input_only_dos, input_split_by_do[1])
+		input_split_by_do := strings.Split(inp, DO)
+		// discard first part and only use later parts. first part is before the first do()
+		input_only_dos = append(input_only_dos, input_split_by_do[1:]...)
 	}
 	var overallSum int = 0
 	for _, inp := range input_only_dos {
