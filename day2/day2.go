@@ -2,6 +2,7 @@ package day2
 
 import (
 	"fmt"
+	"sync"
 
 	"bentelel/adventOfCode2024/utils"
 )
@@ -89,20 +90,36 @@ func B() {
 }
 
 func rowProcessor(row []string) (bool, error) {
+	fmt.Printf("starting rowprocessor for: %v\n", row)
 	errors := make(chan error, len(row))
 	results := make(chan bool, len(row))
+	wg := &sync.WaitGroup{}
 	for i := 0; i < len(row); i++ {
-
+		wg.Add(1)
 		partialRow := utils.DropElementAtIndex(row, i)
-		go utils.WrapChecksForGoroutines(partialRow, lowerBound, upperBound, results, errors)
+		go func(partialRow []string) {
+			defer wg.Done()
+			r, e := utils.OrderAndDistanceCheck(partialRow, lowerBound, upperBound)
+			results <- r
+			errors <- e
+		}(partialRow)
 	}
+
+	go func() {
+		wg.Wait()
+		close(errors)
+		close(results)
+	}()
 	for e := range errors {
+		fmt.Printf("\t\t error: %e\n", e)
 		if e != nil {
 			return false, nil
 		}
 	}
 	for r := range results {
+		fmt.Printf("\t\t res: %t\n", r)
 		if r {
+			fmt.Printf("\trow: %v, is safe.\n", row)
 			return true, nil
 		}
 	}
