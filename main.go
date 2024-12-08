@@ -17,6 +17,7 @@ var registry = map[string]func(){
 	"2A": day2.A,
 	"2B": day2.B,
 	"3A": day3.A,
+	"3B": day3.B,
 }
 
 func main() {
