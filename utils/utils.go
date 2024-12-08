@@ -276,6 +276,31 @@ func AreDistancesOk(input []string, lowerBound int, upperBound int) (bool, error
 	return true, nil
 }
 
+func OrderAndDistanceCheck(input []string, lowerBound, upperBound int) (bool, error) {
+	orderOk, err := IsSliceAllAscendingOrDescending(input)
+	if err != nil {
+		return false, err
+	}
+	distanceOk, err := AreDistancesOk(input, lowerBound, upperBound)
+	if err != nil {
+		return false, err
+	}
+	if orderOk && distanceOk {
+		return true, nil
+	}
+	return false, nil
+}
+
+func RemoveElementFromSlice(s []string, index int) ([]string, error) {
+	if len(s) == 0 {
+		return []string{}, nil
+	}
+	if index < 0 || index >= len(s) {
+		return []string{}, errors.New("Index error. Index out of bounds for slice.")
+	}
+	return append(s[0:index], s[index+1:len(s)-1]...), nil
+}
+
 func DropElementAtIndex(s []string, index int) []string {
 	return append(s[:index], s[index+1:]...)
 }
