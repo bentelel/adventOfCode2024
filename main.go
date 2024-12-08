@@ -8,9 +8,16 @@ import (
 
 	"bentelel/adventOfCode2024/day1"
 	"bentelel/adventOfCode2024/day2"
+	"bentelel/adventOfCode2024/day3"
 )
 
-var registry = map[string]func(){"1A": day1.A, "1B": day1.B, "2A": day2.A, "2B": day2.B}
+var registry = map[string]func(){
+	"1A": day1.A,
+	"1B": day1.B,
+	"2A": day2.A,
+	"2B": day2.B,
+	"3A": day3.A,
+}
 
 func main() {
 	// main entrypoint for advent of code 2024 puzzles
