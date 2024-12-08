@@ -86,17 +86,24 @@ func B() {
 		}
 		saveLevels = append(saveLevels, result)
 	}
-	fmt.Printf("The count of save levels is: %d\n", 0)
+	countOfSaveLevels := 0
+	for _, l := range saveLevels {
+		if l {
+			countOfSaveLevels += 1
+		}
+	}
+	fmt.Printf("The count of save levels is: %d\n", countOfSaveLevels)
 }
 
 func rowProcessor(row []string) (bool, error) {
-	fmt.Printf("starting rowprocessor for: %v\n", row)
+	// fmt.Printf("starting rowprocessor for: %v\n", row)
 	errors := make(chan error, len(row))
 	results := make(chan bool, len(row))
 	wg := &sync.WaitGroup{}
 	for i := 0; i < len(row); i++ {
 		wg.Add(1)
 		partialRow := utils.DropElementAtIndex(row, i)
+		// fmt.Printf("\tchecking part row: %v\n", partialRow)
 		go func(partialRow []string) {
 			defer wg.Done()
 			r, e := utils.OrderAndDistanceCheck(partialRow, lowerBound, upperBound)
@@ -111,15 +118,15 @@ func rowProcessor(row []string) (bool, error) {
 		close(results)
 	}()
 	for e := range errors {
-		fmt.Printf("\t\t error: %e\n", e)
+		// fmt.Printf("\t\t error: %e\n", e)
 		if e != nil {
 			return false, nil
 		}
 	}
 	for r := range results {
-		fmt.Printf("\t\t res: %t\n", r)
+		// fmt.Printf("\t\t res: %t\n", r)
 		if r {
-			fmt.Printf("\trow: %v, is safe.\n", row)
+			// fmt.Printf("\trow: %v, is safe.\n", row)
 			return true, nil
 		}
 	}
