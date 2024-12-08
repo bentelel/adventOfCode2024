@@ -34,6 +34,8 @@ import (
 //  check each element in each slice if it is int with at max 3 digits and at least 1 digit.
 
 func A() {
+	lowerBound := 1
+	upperBound := 999
 	input, err := utils.ReadFileToString("input.txt", "day3")
 	if err != nil {
 		panic(err)
@@ -53,5 +55,28 @@ func A() {
 			factors = append(factors, f)
 		}
 	}
-	fmt.Printf("%v", factors)
+	fmt.Printf("%v\n", factors)
+	var overallResult int = 0
+	for _, fs := range factors {
+		if len(fs) > 2 {
+			continue
+		}
+		ok, left, err := utils.RepresentsIntegerWithinBounds(fs[0], lowerBound, upperBound)
+		if !ok {
+			continue
+		}
+		if err != nil {
+			panic(err)
+		}
+		ok, right, err := utils.RepresentsIntegerWithinBounds(fs[1], lowerBound, upperBound)
+		if !ok {
+			continue
+		}
+		if err != nil {
+			panic(err)
+		}
+		result := left * right
+		overallResult += result
+	}
+	fmt.Printf("The overall result is: %d\n", overallResult)
 }
