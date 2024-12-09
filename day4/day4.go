@@ -82,16 +82,27 @@ func A() {
 	var letterIndices map[string][]int = make(map[string][]int, len(getXMASletters()))
 	for _, l := range getXMASletters() {
 		letterIndices[l] = utils.GetAllIndices(l, input)
-		fmt.Printf("letter: %s, indices: %v\n", l, letterIndices[l])
+		// fmt.Printf("letter: %s, indices: %v\n", l, letterIndices[l])
 	}
 	// this holds slices like [1 2 3 5 8]
-	// this DFS business screams to be made a goroutine. but i can not be arsed to understand this right now.
 	indices := letterIndices[getXMASletters()[0]]
+	// for each X index, we check the 8 rays coming from it if they contain the other letters in sequence. if not, we can abort.
 	var results []bool
+	// this here should be refactored into function calls! nested monstrosity.
 	for _, ind := range indices {
-		res := DFS(1, ind, rowLength, letterIndices)
-		fmt.Printf("for start index %d the results are: %v\n", ind, res)
-		results = append(results, res...)
+		rays := raysFromIndex(ind, rowLength, len(getXMASletters())-1)
+		for _, ray := range rays {
+			XMAS := getXMASletters()
+			var result bool
+			for i := 0; i < len(XMAS)-1; i++ {
+				if !utils.Contains(letterIndices[XMAS[i+1]], ray[i]) {
+					result = false
+					break
+				}
+				result = true
+			}
+			results = append(results, result)
+		}
 	}
 	total := 0
 	for _, r := range results {
@@ -107,72 +118,10 @@ func A() {
 func B() {
 }
 
-func DFS(letterLevel int, startIndex int, rowLength int, m map[string][]int) []bool {
-	//if letterLevel > len(getXMASletters()) {
-	//	return true
-	//}
-	letterToSearch := getXMASletters()[letterLevel]
-	neighbours := neighbouringIndices(startIndex, rowLength)
-	intersection := utils.Intersect(neighbours, m[letterToSearch])
-	fmt.Printf("letterlevel: %d, startIndex: %d, rowLength: %d, letter: %s, intersect: %v\n", letterLevel, startIndex, rowLength, letterToSearch, intersection)
-	if len(intersection) == 0 {
-		return []bool{false}
-	}
-	if letterLevel == len(getXMASletters())-1 {
-		var results []bool
-		for range intersection {
-			results = append(results, true)
-		}
-		return results
-	}
-	var results []bool
-	for _, ind := range intersection {
-		results = append(results, DFS(letterLevel+1, ind, rowLength, m)...)
-	}
-	return results
-}
-
-// reihe 24, einmal angenommen
-
-func neighbouringIndices(index int, rowLength int) []int {
-	// we need to "kill" some indices which are not valid.
-	// these are the ones, where index-1 or index+1 would carry over to the last or next line. those are actually not true neightbours.
-	// if index%rowlength == 0, then we are at the start of the line and nuke the left index
-	// if index%rowLength == rowLength-1, then we are at the end of a line and nuke the right index
-	// we also need to nuke some of the diagonal indices
-	impossibleIndex := -999
-	var topLeft int
-	var left int
-	var bottomLeft int
-	if index%rowLength == 0 {
-		topLeft = impossibleIndex
-		left = impossibleIndex
-		bottomLeft = impossibleIndex
-	} else {
-		topLeft = index - rowLength - 1
-		left = index - 1
-		bottomLeft = index + rowLength - 1
-	}
-	top := index - rowLength
-	var right int
-	var topRight int
-	var bottomRight int
-	if index%rowLength == rowLength-1 {
-		right = impossibleIndex
-		topRight = impossibleIndex
-		bottomRight = impossibleIndex
-	} else {
-		right = index + 1
-		topRight = index - rowLength + 1
-		bottomRight = index + rowLength + 1
-	}
-	bottom := index + rowLength
-	return []int{topLeft, top, topRight, left, right, bottomLeft, bottom, bottomRight}
-}
-
 func raysFromIndex(startIndex int, rowLength int, rayLength int) [][]int {
 	// casts ray from start index in all 8 directions, returns slice of new indices ordered from nearest to startIndex to farest
 	var tl, t, tr, r, br, b, bl, l []int
+	impossibleIndex := -999
 	for i := 1; i <= rayLength; i++ {
 		if startIndex%rowLength != 0 {
 			// left edge of the input
@@ -182,6 +131,10 @@ func raysFromIndex(startIndex int, rowLength int, rayLength int) [][]int {
 			bl = append(bl, startIndex+i*(rowLength-1))
 			// left
 			l = append(l, startIndex-i*1)
+		} else {
+			tl = append(tl, impossibleIndex)
+			bl = append(bl, impossibleIndex)
+			l = append(l, impossibleIndex)
 		}
 		if startIndex%rowLength != rowLength-1 {
 			// right edge of the input
@@ -191,6 +144,10 @@ func raysFromIndex(startIndex int, rowLength int, rayLength int) [][]int {
 			r = append(r, startIndex+i*1)
 			// bottom right
 			br = append(br, startIndex+i*(rowLength+1))
+		} else {
+			tr = append(tr, impossibleIndex)
+			r = append(r, impossibleIndex)
+			br = append(br, impossibleIndex)
 		}
 		// top
 		t = append(t, startIndex-i*rowLength)
