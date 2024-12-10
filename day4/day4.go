@@ -116,6 +116,111 @@ func A() {
 }
 
 func B() {
+	// find X-MAS
+	// M.S
+	// .A.
+	// M.S
+	// the above is 1 hit.
+	// plan: find indices of all As
+	// check both diagonals for the As, if each diagonal contains exactly 1 M and 1 S, then it is an X
+	// 2 checks:
+	// get all A-indices
+	// for each A indice, check the 4 surrounding indices against the M and S indices
+	// if both intersections are of exactly length 2, we then need to check if the indices for one of them are on the same diagonal > if not, we have an x
+	// same diagonal is when: smallerIndex + 2*rowLength+2
+
+	input, err := utils.ReadFileToString("input.txt", "day4")
+	if err != nil {
+		panic(err)
+	}
+	rowLength := len(utils.StripTrailingNewlines(strings.Split(input, SEPARATOR)[0]))
+	// remove all newline characters
+	input = strings.Replace(input, SEPARATOR, "", -1)
+	input = utils.StripTrailingNewlines(input)
+	lettersCount := make(map[string]int)
+	for _, letter := range getXMASletters() {
+		count := strings.Count(input, letter)
+		lettersCount[letter] = count
+	}
+	var letterIndices map[string][]int = make(map[string][]int, len(getXMASletters()))
+	for _, l := range getXMASletters() {
+		letterIndices[l] = utils.GetAllIndices(l, input)
+	}
+	var xCount int = 0
+	// magic letter..
+	for _, index := range letterIndices["A"] {
+		// fmt.Printf("starting index: %d\n", index)
+		diagonals := X_indices(index, rowLength)
+		// fmt.Printf("diagnoals: %v\n", diagonals)
+		intersect_M := utils.Intersect(diagonals, letterIndices["M"])
+		if len(intersect_M) != 2 {
+			continue
+		}
+		if IndicesAreOnSameDiagonal(intersect_M[0], intersect_M[1], rowLength) {
+			continue
+		}
+		intersect_S := utils.Intersect(diagonals, letterIndices["S"])
+		// fmt.Printf("s intersect: %v\n", intersect_S)
+		if len(intersect_S) != 2 {
+			continue
+		}
+		// second diagonal check not needed. we only have 4 indices, if 2 of those for M are NOT on the same diagonal, the ones for S can't be either.
+		// wrong. second check was needed. why though?....
+		if IndicesAreOnSameDiagonal(intersect_S[0], intersect_S[1], rowLength) {
+			continue
+		}
+		// fmt.Printf("X-MAS found. index: %d, line: %d, pos in line: %d\n", index, index/rowLength, index%rowLength+1)
+		xCount += 1
+	}
+	fmt.Printf("rowlength: %d\n", rowLength)
+	fmt.Printf("Overall X-MAS count is: %d.\n", xCount)
+}
+
+func IndicesAreOnSameDiagonal(index1 int, index2 int, rowLength int) bool {
+	var smallerIndex, biggerIndex int
+	if index1 == index2 {
+		return true
+	}
+	if index1 > index2 {
+		biggerIndex = index1
+		smallerIndex = index2
+	} else {
+		biggerIndex = index2
+		smallerIndex = index1
+	}
+	// magic numbers yay
+	if smallerIndex+2*(rowLength+1) == biggerIndex {
+		return true
+	}
+	return false
+}
+
+func X_indices(startIndex int, rowLength int) []int {
+	var tl, tr, br, bl int
+	impossibleIndex := -999
+
+	if startIndex%rowLength != 0 {
+		// left edge of the input
+		// top left
+		tl = startIndex - rowLength - 1
+		// bottom left
+		bl = startIndex + rowLength - 1
+	} else {
+		tl = impossibleIndex
+		bl = impossibleIndex
+	}
+	if startIndex%rowLength != rowLength-1 {
+		// right edge of the input
+		// top right
+		tr = startIndex - rowLength + 1
+		// bottom right
+		br = startIndex + rowLength + 1
+	} else {
+		tr = impossibleIndex
+		br = impossibleIndex
+	}
+
+	return []int{tl, tr, br, bl}
 }
 
 func raysFromIndex(startIndex int, rowLength int, rayLength int) [][]int {
